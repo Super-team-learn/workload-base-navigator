@@ -29,6 +29,10 @@ async def get_routes_route(pnt_a, pnt_b, response: Response):
         if pnt['type'] == 'coordinates':
             # Форматируем координаты
             pnt['value'] = tuple(map(float, pnt['value'].split(',')))
+            pnt['value'] = {
+                'lat': pnt['value'][0],
+                'lon': pnt['value'][1]
+            }
         else:
             # Получаем кооридинаты при помоши Geocoder API
             suggest_response = requests.get('https://geocode.maps.co/search', {
@@ -43,6 +47,9 @@ async def get_routes_route(pnt_a, pnt_b, response: Response):
             suggest_response = suggest_response.json()
             pnt['type'] = 'coordinates'
             coords = suggest_response[0]
-            pnt['value'] = (float(coords['lat']), float(coords['lon']))
+            pnt['value'] = {
+                'lat': float(coords['lat']),
+                'lon': float(coords['lon'])
+            }
     pts = (pts[0]['value'], pts[1]['value'])
     return get_routes(pts)
