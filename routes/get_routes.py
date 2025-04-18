@@ -1,5 +1,5 @@
 from random import randint
-
+import math
 import requests
 import json
 
@@ -31,6 +31,8 @@ def get_routes(pts):
                                  },
                              "transport": ["bus", "tram", "trolleybus"]
                          }).json()
+def station_weight(x, n): #Функция весов для остановок в зависимости их позиции по маршруту
+    return math.log(n - x, 2)
 
     routes = []
     for route in data:
@@ -58,12 +60,13 @@ def get_routes(pts):
                 })
             mov['platforms'] = new_platforms
             stations = mov['platforms']
-            for q in stations:
-                q['name'] = q['name'].replace(' (по требованию)', '')
+            for q in range(len(stations)):
+                stations[q]['name'] = stations[q]['name'].replace(' (по требованию)', '')
                 # workload = requests.post('http://127.0.0.1:8000/count_people', json={'station_name': q}).json()
                 # workload = workload['number_of_people']
                 workload = randint(0, 60) / 10
-                q['workload'] = workload
+                workload *= station_weight(q, len(stations))
+                stations[q]['workload'] = workload
             workloads = tuple(x['workload'] for x in stations)
             mov['workload'] = sum(workloads) / len(workloads)  # Берётся среднее по загруженности промежуточных станций
             movements.append(mov)
