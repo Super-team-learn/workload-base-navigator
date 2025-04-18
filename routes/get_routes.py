@@ -64,7 +64,6 @@ def get_routes(pts):
                 # workload = workload['number_of_people']
                 workload = randint(0, 60) / 10
                 q['workload'] = workload
-            print(stations)
             workloads = tuple(x['workload'] for x in stations)
             mov['workload'] = sum(workloads) / len(workloads)  # Берётся среднее по загруженности промежуточных станций
             movements.append(mov)
@@ -72,4 +71,5 @@ def get_routes(pts):
         route['workload'] = sum([i['workload'] for i in movements]) / len(movements)
         routes.append(route)
 
+    routes.sort(key=lambda x: x['workload'])
     return routes
