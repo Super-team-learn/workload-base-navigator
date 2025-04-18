@@ -8,7 +8,7 @@ class StationRequest(BaseModel):
 
 app = FastAPI(title="ML API", version="0.1")
 
-model = YOLO("best (3).pt")
+model = YOLO("yolo.pt")
 
 @app.get("/")
 def home():
@@ -23,4 +23,4 @@ def count_people(request: StationRequest):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8001)

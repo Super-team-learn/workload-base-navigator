@@ -5,7 +5,7 @@ import json
 
 key = 'ed3b168b-3bc9-4a90-b03b-13df2aece788'
 def station_weight(x, n): #Функция весов для остановок в зависимости их позиции по маршруту
-    return math.log(n - x, 2)
+    return math.log(n - x + 1, 1.2)
 
 def get_routes(pts):
     data = requests.post(f'https://routing.api.2gis.com/public_transport/2.0?key={key}',
@@ -62,9 +62,8 @@ def get_routes(pts):
             stations = mov['platforms']
             for q in range(len(stations)):
                 stations[q]['name'] = stations[q]['name'].replace(' (по требованию)', '')
-                # workload = requests.post('http://127.0.0.1:8000/count_people', json={'station_name': q}).json()
-                # workload = workload['number_of_people']
-                workload = randint(0, 60) / 10
+                workload = requests.post('http://127.0.0.1:8001/count_people', json={'station_name': stations[q]['name']}).json()
+                workload = workload['number_of_people']
                 workload *= station_weight(q, len(stations))
                 stations[q]['workload'] = workload
             workloads = tuple(x['workload'] for x in stations)

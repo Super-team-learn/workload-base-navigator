@@ -53,3 +53,7 @@ async def get_routes_route(pnt_a, pnt_b, response: Response):
             }
     pts = (pts[0]['value'], pts[1]['value'])
     return get_routes(pts)
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
