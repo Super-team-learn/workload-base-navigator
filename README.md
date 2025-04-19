@@ -12,6 +12,14 @@ To start use ``uvicorn`` on port ``8001``
       python yolo_backend.py
 ```
 
+## Stations monitoring services
+A service that collects information about the number of passengers at a stop every minute in order to more accurately calculate the optimal route and collect historical data.
+
+To start:
+```shell
+    python save_in_db.py
+```
+
 ## Requirements
 ```
 fastapi==0.115.12
