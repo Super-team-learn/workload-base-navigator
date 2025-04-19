@@ -80,9 +80,9 @@ def get_routes(pts):
             # Определяем загруженность каждой из остановки
             for q in range(len(stations)):
                 stations[q]['name'] = stations[q]['name'].replace(' (по требованию)', '')
-                # workload = requests.post('http://127.0.0.1:8000/count_people', json={'station_name': q}).json()
-                # workload = workload['number_of_people']
-                workload = randint(0, 60) / 10
+                workload = requests.post('http://127.0.0.1:8001/count_people', json={'station_name': str(max(10, ord(stations[q]['name'][0].upper()) - ord('А') + 1)), 'time':None}).json()
+                workload = workload['number_of_people']
+                #workload = randint(0, 60) / 10
                 workload *= station_weight(q, len(stations))  # Используем функцию веса остановки
                 stations[q]['workload'] = workload
             workloads = tuple(x['workload'] for x in stations)
@@ -98,8 +98,8 @@ def get_routes(pts):
     return routes
 
 # Подгрузить список маршрутов Московского транспорта
-with open('transport_routes.json', 'r', encoding='utf-8') as f:
-    stations_info = json.load(f)
+'''with open('transport_routes.json', 'r', encoding='utf-8') as f:
+    stations_info = json.load(f)'''
 
 
 def get_past_routes(routes_names, station, next_station):
@@ -129,3 +129,5 @@ def get_past_routes(routes_names, station, next_station):
         route['workload'] = sum(workloads) / len(workloads)
         routes.append(route)
     return routes
+
+get_routes([{'lat': 55.757671, 'lon':37.616396}, {'lat': 55.702305, 'lon':37.529068}])
