@@ -74,7 +74,7 @@ def get_routes(pts):
         route['workload'] = sum([i['workload'] for i in movements]) / len(movements)
         routes.append(route)
 
-    routes.sort(key=lambda x: x['workload'])
+    routes.sort(key=lambda x: x['workload']+x['moving_duration']/60)
     return routes
 
 with open('transport_routes.json', 'r', encoding='utf-8') as f:
