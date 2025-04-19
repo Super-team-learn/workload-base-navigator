@@ -8,6 +8,7 @@ def station_weight(x, n): #Функция весов для остановок �
     return math.log(n - x + 1, 1.2)
 
 def get_routes(pts):
+    #Запрос к API 2GIS
     data = requests.post(f'https://routing.api.2gis.com/public_transport/2.0?key={key}',
                          headers={'Content-Type': 'application/json'},
                          json={
@@ -62,19 +63,19 @@ def get_routes(pts):
             stations = mov['platforms']
             for q in range(len(stations)):
                 stations[q]['name'] = stations[q]['name'].replace(' (по требованию)', '')
-                # workload = requests.post('http://127.0.0.1:8000/count_people', json={'station_name': q}).json()
+                # workload = requests.post('http://127.0.0.1:8000/count_people', json={'station_name': q}).json() #Запрос к нашем апи с моделью
                 # workload = workload['number_of_people']
                 workload = randint(0, 60) / 10
-                workload *= station_weight(q, len(stations))
+                workload *= station_weight(q, len(stations)) # Домножаем на коэфициент перед остановкой
                 stations[q]['workload'] = workload
             workloads = tuple(x['workload'] for x in stations)
-            mov['workload'] = sum(workloads) / len(workloads)  # Берётся среднее по загруженности промежуточных станций
+            mov['workload'] = sum(workloads) / len(workloads)  # Берётся ВЗВЕШЕННОЕ среднее по загруженности промежуточных станций
             movements.append(mov)
         route['movements'] = movements
-        route['workload'] = sum([i['workload'] for i in movements]) / len(movements)
+        route['workload'] = sum([i['workload'] for i in movements]) / len(movements) # Среднее по передвижениям
         routes.append(route)
 
-    routes.sort(key=lambda x: x['workload']+x['moving_duration']/60)
+    routes.sort(key=lambda x: x['workload']+x['moving_duration']/60) # Сортировка по загруженности и времени путиЫ
     return routes
 
 with open('transport_routes.json', 'r', encoding='utf-8') as f:
