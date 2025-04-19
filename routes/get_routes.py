@@ -1,9 +1,9 @@
 from random import randint
 import math
 import requests
-import json
 
 key = 'ed3b168b-3bc9-4a90-b03b-13df2aece788'
+
 def station_weight(x, n): #Функция весов для остановок в зависимости их позиции по маршруту
     return math.log(n - x + 1, 1.2)
 
@@ -64,13 +64,21 @@ def get_routes(pts):
                 stations[q]['name'] = stations[q]['name'].replace(' (по требованию)', '')
                 workload = requests.post('http://127.0.0.1:8001/count_people', json={'station_name': stations[q]['name']}).json()
                 workload = workload['number_of_people']
+
                 workload *= station_weight(q, len(stations))
                 stations[q]['workload'] = workload
             workloads = tuple(x['workload'] for x in stations)
             mov['workload'] = sum(workloads) / len(workloads)  # Берётся среднее по загруженности промежуточных станций
             movements.append(mov)
         route['movements'] = movements
-        route['workload'] = sum([i['workload'] for i in movements]) / len(movements)
+        billing = requests.get('http://127.0.0.1:8002/subscribers-count', {
+            'lat': pts[0]['lat'],
+            'lon': pts[1]['lon'],
+            'radius': 0.5
+        }).json()
+        billing_count = billing['subscribers_count']
+        # Просчитываем загруженность маршрута с использованием результата нейросети и коэффициента биллинг-системы
+        route['workload'] = sum([i['workload'] for i in movements]) / len(movements) * min(max(0.7, billing_count/100), 2)
         routes.append(route)
 
     routes.sort(key=lambda x: x['workload'])
