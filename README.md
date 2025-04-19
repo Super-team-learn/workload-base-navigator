@@ -21,3 +21,5 @@ Requests==2.32.3
 ultralytics==8.3.111
 uvicorn==0.34.1
 ```
+
+Информация о маршрутах транспорта взята с сайта https://transport.teletribe.ru/transport/schedule
