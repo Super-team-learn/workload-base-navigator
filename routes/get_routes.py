@@ -5,7 +5,7 @@ import json
 
 key = 'ed3b168b-3bc9-4a90-b03b-13df2aece788'
 def station_weight(x, n): #Функция весов для остановок в зависимости их позиции по маршруту
-    return math.log(n - x + 1, 2)
+    return math.log(n - x + 1, 1.2)
 
 def get_routes(pts):
     data = requests.post(f'https://routing.api.2gis.com/public_transport/2.0?key={key}',
